@@ -15,3 +15,5 @@ cronlog.err
 lifetime.sqlite
 ntracks.pdf
 tracklengths.pdf
+lifetime.sqlite-journal
+login.dat
