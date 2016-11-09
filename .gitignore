@@ -17,3 +17,8 @@ ntracks.pdf
 tracklengths.pdf
 lifetime.sqlite-journal
 login.dat
+Lifetime_C_ACLiC_dict.cxx
+Lifetime_C_ACLiC_dict.h
+Lifetime_C_ACLiC_linkdef.h
+Lifetime_C_ACLiC_map.in
+
