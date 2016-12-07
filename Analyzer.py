@@ -140,9 +140,11 @@ def mergeFiles(fnames, tracks):
   temp.close
   
   print "Copying %s to %s..." % (tout, outfilename)
+  if os.path.isfile(outfilename):
+    tifdh.rm(outfilename)
   tifdh.cp((tout,outfilename))
-  tifdh.cleanup()
-  return outfilename, int(start1),int(end2)
+  #tifdh.cleanup()
+  return outfilename, int(start1),int(end2), tout
 
 
 def GetFieldTotal(field, intfile, total=True):
@@ -216,11 +218,13 @@ def main():
     while True: #loop until there aren't enough tracks left for this group
       flist,tracks=getEnoughFiles(groupid,ntracks)
       if tracks>=ntracks and tracks>0:
-        outfilename,start,end=mergeFiles(tuple(x[1] for x in flist),ntracks) #passing fnames
-        ltdata=analyzeFile(outfilename, disableOne)
+        outfilename,start,end,toutfilename=mergeFiles(tuple(x[1] for x in flist),ntracks) #passing fnames
+        ltdata=analyzeFile(toutfilename, disableOne)
         ltid=storeData(outfilename,start,end,ltdata, groupid)
         markAsUsed(groupid,tuple(x[0] for x in flist),ltid) #passing fids
         conn.commit()
+        #remove the local temp file
+        os.remove(toutfilename)
         if disableOne:
             print "Exiting due to disableOne being enabled."
             exit()

@@ -24,3 +24,4 @@ Lifetime_C_ACLiC_map.in
 Lifetime_C_ACLiC_dict.o
 Lifetime_C_ACLiC_mainC
 Lifetime_C_ACLiC_map.out
+.nfs*
