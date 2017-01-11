@@ -18,3 +18,7 @@ ECLAPI.py, ecl_post.py:
   
 runs.sh:
   The script that gets run by the cronjob that calls the scripts in the appropriate sequence.
+
+
+TODO:
+  Make the Analyzer.py script see if files exist before trying to copy them.
