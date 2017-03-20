@@ -55,7 +55,7 @@ set output 'QCQA_300tracks.pdf'
 replot
 
 
-set yrange [190:230]
+set yrange [100:230]
 set ylabel "Q [ADC]" font ",17"
 gid="2"
 set output 'QCandQA_50tracks.pdf'

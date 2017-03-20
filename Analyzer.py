@@ -68,8 +68,14 @@ def getTimeStampFromTree(fname):
     #print t.evttime, mint, maxt, t.ntracks_selec
   return mint, maxt, run
 
-def getEnoughFiles(groupid, ntracks):
+def deleteFileByID(fid):
+  c = conn.cursor()
+  c.execute("DELETE from files where fid=%d" %(fid))
 
+def getEnoughFiles(groupid, ntracks):
+  tifdh=ifdh.ifdh()
+  
+  #Query for unused files
   c = conn.cursor()
   c.execute("SELECT fid,fname,tracks from files where fid not in (SELECT fid from usedFiles where groupid=%d) order by srun,sevent;"%(groupid))
   ct=0
@@ -77,9 +83,18 @@ def getEnoughFiles(groupid, ntracks):
   ftups=[]
   print "Found %d unused files." % len(rows)
   
+  #loop over files, accumulating enough tracks
   for row in rows:
-    #print row
     if row[2]==0: continue
+    #Check file exists
+    print row[1]
+    if len(tifdh.ls(str(row[1]),0))==0:
+      #file is missing (likely has been removed, updated, or replaced with a newer version for uknown reasons
+      #delete the file
+      print "Deleting file not found on disk from DB: %s" % (str(row[1]))
+      deleteFileByID(row[0])
+      continue
+
     ct+=row[2]
     ftups.append((row[0],row[1]))
     if ct>=ntracks: break
