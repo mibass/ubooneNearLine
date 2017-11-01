@@ -1,12 +1,20 @@
 #!/nashome/m/mibass/bin/bin/gnuplot
 
 set terminal pdf enhanced dashed
+set datafile separator "|"
+
 #set term svg enhanced mouse size 600,400
+
+set output 'avgcrossingpersubrun.pdf'
+set ylabel 'Avg Crossing Tracks Per Subrun'
+set xlabel 'Run Number'
+plot '<sqlite3 lifetime.sqlite "select srun, sum(1.0*tracks)/count(ssubrun) from files where srun<1e8 and srun>2000 group by srun;"' using 1:2 noti
+
+
 
 set xdata time
 set timefmt "%s"
 set format x "%m/%d/%Y \n%H:%M:%S"
-set datafile separator "|"
 set xtics rotate by -45
 set rmargin 6
 points="50"

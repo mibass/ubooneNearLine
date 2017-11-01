@@ -8,6 +8,7 @@ QCandQA_50tracks.pdf
 QCQA_100tracks.pdf
 QCQA_50tracks.pdf
 QCandQA_300tracks.pdf
+*.pdf
 cronlog.log
 gmon.out
 nohup.out

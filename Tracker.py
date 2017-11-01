@@ -1,8 +1,9 @@
 #!/bin/env python
 import sqlite3, os, glob, ROOT, fnmatch
+from datetime import datetime, timedelta
 
-
-
+daysToGoBack=30 #nominal should be ~10 (won't search past maxSkip files though)
+maxSkip=10000000 #set to a high number to make sure everything is reprocessed back, otherwise 500 works
 dbname="lifetime.sqlite"
 searchPath="/pnfs/uboone/persistent/uboonepro/electron_lifetime_test/v05_08_00_04/"
 fileSearchString="SwizRecoLifetime_hist_*.root"
@@ -74,19 +75,26 @@ def getStats(fname):
 def getNewFiles():
   skipcount=0
   #for filename in sorted(glob.iglob(searchPath+'/**/'+fileSearchString,recursive=True), key=os.path.getmtime):
-  for root, dirnames, filenames in os.walk(searchPath):
-    for filename in fnmatch.filter(filenames, fileSearchString):
-      filepath=os.path.join(root, filename)
-      print(filepath)
-      if not fileInDB(filepath):
-        stats=getStats(filepath)
-        AddFileToDB(filepath, stats['tracks'], stats['startnum'], stats['startsubrun'], stats['startevent'])
-      else:
-        print "\t skipped...|"
-        skipcount+=1
-        if skipcount>200: 
-          print "Skipped 200 files... not checking anymore (assumes newest directories returned first!)."
-          return
+
+  for dday in range(daysToGoBack):
+    #build search path for today's date - dday
+    d = datetime.today() - timedelta(days=dday)
+    lsearchPath=searchPath+("/%d/%02d/%02d/" %(d.year, d.month, d.day))
+    print("Searching path %s" %lsearchPath)
+    for root, dirnames, filenames in os.walk(lsearchPath):
+      for filename in fnmatch.filter(filenames, fileSearchString):
+        filepath=os.path.join(root, filename)
+        print(filepath)
+        if not fileInDB(filepath):
+          stats=getStats(filepath)
+          AddFileToDB(filepath, stats['tracks'], stats['startnum'], stats['startsubrun'], stats['startevent'])
+          skipcount=0
+        else:
+          print "\t skipped...|"
+          skipcount+=1
+          if skipcount>maxSkip: 
+            print "Skipped",maxSkip," files... not checking anymore (assumes newest directories returned first!)."
+            return
 
 def openDB():
   global conn
