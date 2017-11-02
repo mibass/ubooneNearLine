@@ -2,8 +2,8 @@
 import sqlite3, os, glob, ROOT, fnmatch
 from datetime import datetime, timedelta
 
-daysToGoBack=30 #nominal should be ~10 (won't search past maxSkip files though)
-maxSkip=10000000 #set to a high number to make sure everything is reprocessed back, otherwise 500 works
+daysToGoBack=3 #nominal should be ~10 (won't search past maxSkip files though)
+maxSkip=500 #set to a high number to make sure everything is reprocessed back, otherwise 500 works
 dbname="lifetime.sqlite"
 searchPath="/pnfs/uboone/persistent/uboonepro/electron_lifetime_test/v05_08_00_04/"
 fileSearchString="SwizRecoLifetime_hist_*.root"
@@ -79,7 +79,7 @@ def getNewFiles():
   for dday in range(daysToGoBack):
     #build search path for today's date - dday
     d = datetime.today() - timedelta(days=dday)
-    lsearchPath=searchPath+("/%d/%02d/%02d/" %(d.year, d.month, d.day))
+    lsearchPath=searchPath+("%d/%02d/%02d/" %(d.year, d.month, d.day))
     print("Searching path %s" %lsearchPath)
     for root, dirnames, filenames in os.walk(lsearchPath):
       for filename in fnmatch.filter(filenames, fileSearchString):
